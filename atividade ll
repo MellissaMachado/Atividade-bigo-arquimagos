@@ -1,0 +1,216 @@
+"""
+A Prova dos Arquimagos de Algoritmia
+Atividade 02 - Notação Big-O nas 7 ordens arcanas
+
+Cada função abaixo demonstra uma classe de complexidade:
+O(1), O(log n), O(n), O(n log n), O(n²), O(2^n) e O(n!)
+"""
+
+
+# ---------------------------------------------------------------
+# O(1) - O Feitiço do Teletransporte Direto (Constante)
+# ---------------------------------------------------------------
+def invocar_lider_da_guilda(aventureiros: list) -> str:
+    """Complexidade: O(1) - Retorna o primeiro membro instantaneamente."""
+    # Passo 1: verifica se a lista está vazia (uma única comparação)
+    if not aventureiros:
+        return "A guilda está vazia!"
+    # Passo 2: acesso direto ao índice 0, sem percorrer a lista
+    return aventureiros[0]
+
+
+# ---------------------------------------------------------------
+# O(log n) - O Oráculo do Espelho Binário (Logarítmica)
+# ---------------------------------------------------------------
+def busca_binaria_magica(runas: list, poder_alvo: int) -> int:
+    """Complexidade: O(log n) - Busca binária em lista ORDENADA.
+    Retorna o índice da runa com o poder buscado, ou -1 se não existir."""
+    # Define os limites da região de busca: toda a lista no início
+    inicio = 0
+    fim = len(runas) - 1
+
+    # Enquanto ainda houver região a investigar
+    while inicio <= fim:
+        # Passo 1: encontra a posição do meio da região atual
+        meio = (inicio + fim) // 2
+
+        # Passo 2: achou a runa! Retorna a posição
+        if runas[meio] == poder_alvo:
+            return meio
+        # Passo 3: o alvo é maior -> descarta a metade esquerda
+        elif runas[meio] < poder_alvo:
+            inicio = meio + 1
+        # Passo 4: o alvo é menor -> descarta a metade direita
+        else:
+            fim = meio - 1
+
+    # A região acabou sem encontrar: a runa não existe na lista
+    return -1
+
+
+# ---------------------------------------------------------------
+# O(n) - A Ronda das Sentinelas (Linear)
+# ---------------------------------------------------------------
+def ronda_das_sentinelas(pergaminhos: list, selo_procurado: str) -> int:
+    """Complexidade: O(n) - Conta quantos pergaminhos têm o selo procurado,
+    percorrendo a lista do início ao fim."""
+    # Contador começa zerado
+    contagem = 0
+
+    # Passo 1: percorre CADA pergaminho da lista, um por vez (n iterações)
+    for pergaminho in pergaminhos:
+        # Passo 2: compara o pergaminho atual com o selo procurado (custo constante)
+        if pergaminho == selo_procurado:
+            # Passo 3: encontrou, então incrementa o contador
+            contagem += 1
+
+    # Passo 4: devolve o total após conferir todos
+    return contagem
+
+
+# ---------------------------------------------------------------
+# O(n log n) - A Reorganização da Grande Biblioteca (Linearítmica)
+# ---------------------------------------------------------------
+def mesclar(esquerda: list, direita: list) -> list:
+    """Junta duas listas já ordenadas em uma só, mantendo a ordem. Custo: O(n)."""
+    resultado = []
+    i = 0  # ponteiro da lista da esquerda
+    j = 0  # ponteiro da lista da direita
+
+    # Passo 1: enquanto ambas ainda têm elementos, pega sempre o menor da frente
+    while i < len(esquerda) and j < len(direita):
+        if esquerda[i][1] <= direita[j][1]:
+            resultado.append(esquerda[i])
+            i += 1
+        else:
+            resultado.append(direita[j])
+            j += 1
+
+    # Passo 2: sobrou algo em alguma das listas? Já está ordenado, é só anexar
+    resultado.extend(esquerda[i:])
+    resultado.extend(direita[j:])
+    return resultado
+
+
+def ordenar_monstros(monstros: list) -> list:
+    """Complexidade: O(n log n) - Merge Sort.
+    Cada monstro é uma tupla (nome, nivel_de_periculosidade)."""
+    # Caso base: lista com 0 ou 1 monstro já está ordenada
+    if len(monstros) <= 1:
+        return monstros
+
+    # Passo 1 (Dividir): separa a lista ao meio
+    meio = len(monstros) // 2
+    metade_esq = ordenar_monstros(monstros[:meio])   # ordena a metade esquerda
+    metade_dir = ordenar_monstros(monstros[meio:])   # ordena a metade direita
+
+    # Passo 2 (Conquistar): mescla as duas metades ordenadas
+    return mesclar(metade_esq, metade_dir)
+
+
+# ---------------------------------------------------------------
+# O(n²) - O Duelo dos Aprendizes (Quadrática)
+# ---------------------------------------------------------------
+def duelo_dos_aprendizes(forcas: list) -> list:
+    """Complexidade: O(n²) - Bubble Sort com laços aninhados.
+    Cada 'duelo' compara dois vizinhos; o mais forte avança para o fim da fila."""
+    # Copia a lista para não alterar a original
+    lista = forcas.copy()
+    n = len(lista)
+
+    # Laço externo: repete as rodadas do torneio (n vezes)
+    for rodada in range(n):
+        # Laço interno: cada rodada faz os duelos entre vizinhos (até n vezes)
+        # O "- rodada - 1" evita comparar os que já estão no lugar certo no fim
+        for i in range(n - rodada - 1):
+            # Duelo: se o da esquerda é mais forte, eles trocam de lugar
+            if lista[i] > lista[i + 1]:
+                lista[i], lista[i + 1] = lista[i + 1], lista[i]
+
+    # Ao final de todas as rodadas, a lista está em ordem crescente
+    return lista
+
+
+# ---------------------------------------------------------------
+# O(2^n) - O Baú das Fórmulas Esquecidas (Exponencial)
+# ---------------------------------------------------------------
+def conjunto_das_pocoes(ingredientes: list) -> list:
+    """Complexidade: O(2^n) - Gera todos os subconjuntos possíveis da lista."""
+    # Caso base: sem ingredientes, existe só uma combinação, a vazia
+    if not ingredientes:
+        return [[]]
+
+    # Separa o primeiro ingrediente do restante da lista
+    primeiro = ingredientes[0]
+    resto = ingredientes[1:]
+
+    # Passo 1: gera recursivamente todas as combinações SEM o primeiro ingrediente
+    sem_primeiro = conjunto_das_pocoes(resto)
+
+    # Passo 2: cria as combinações COM o primeiro (adiciona-o a cada uma anterior)
+    com_primeiro = [[primeiro] + combinacao for combinacao in sem_primeiro]
+
+    # Passo 3: junta os dois grupos (o total dobra a cada ingrediente)
+    return sem_primeiro + com_primeiro
+
+
+# ---------------------------------------------------------------
+# O(n!) - A Rota do Mensageiro Real (Fatorial)
+# ---------------------------------------------------------------
+def rotas_do_mensageiro(castelos: list) -> list:
+    """Complexidade: O(n!) - Gera todas as permutações (ordens de visita)."""
+    # Caso base: com 0 ou 1 castelo, só existe uma ordem possível
+    if len(castelos) <= 1:
+        return [castelos]
+
+    todas_as_rotas = []
+
+    # Passo 1: escolhe cada castelo como o PRIMEIRO da rota (n opções)
+    for i in range(len(castelos)):
+        escolhido = castelos[i]
+        # Passo 2: separa os castelos que sobraram (todos menos o escolhido)
+        restantes = castelos[:i] + castelos[i + 1:]
+
+        # Passo 3: gera recursivamente todas as ordens dos restantes (n-1 opções, etc.)
+        for sub_rota in rotas_do_mensageiro(restantes):
+            # Passo 4: coloca o escolhido na frente de cada sub-rota
+            todas_as_rotas.append([escolhido] + sub_rota)
+
+    return todas_as_rotas
+
+
+# ---------------------------------------------------------------
+# Testes: só rodam quando o arquivo é executado diretamente
+# ---------------------------------------------------------------
+if __name__ == "__main__":
+    print("--- O(1) ---")
+    guilda = ["Gandalf", "Hermione", "Merlin", "Dumbledore"]
+    print(invocar_lider_da_guilda(guilda))  # Gandalf
+
+    print("\n--- O(log n) ---")
+    runas = [5, 12, 20, 33, 47, 58, 71, 90]  # já ordenada
+    print(busca_binaria_magica(runas, 47))   # 4
+    print(busca_binaria_magica(runas, 8))    # -1
+
+    print("\n--- O(n) ---")
+    # Os selos se repetem de propósito, porque a função CONTA quantos existem
+    pergaminhos = ["fogo", "gelo", "fogo", "raio", "fogo", "gelo"]
+    print(ronda_das_sentinelas(pergaminhos, "fogo"))  # 3
+
+    print("\n--- O(n log n) ---")
+    monstros = [("Dragão", 95), ("Goblin", 10), ("Troll", 60), ("Slime", 3), ("Hidra", 80)]
+    print(ordenar_monstros(monstros))
+
+    print("\n--- O(n²) ---")
+    print(duelo_dos_aprendizes([42, 7, 19, 3, 88, 25]))  # [3, 7, 19, 25, 42, 88]
+
+    print("\n--- O(2^n) ---")
+    pocoes = conjunto_das_pocoes(["fogo", "gelo", "raio"])
+    print(len(pocoes))  # 8 (= 2^3)
+    print(pocoes)
+
+    print("\n--- O(n!) ---")
+    rotas = rotas_do_mensageiro(["Norte", "Sul", "Leste"])
+    print(len(rotas))  # 6 (= 3!)
+    for rota in rotas:
+        print(rota)
